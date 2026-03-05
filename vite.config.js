@@ -10,7 +10,7 @@ const repoName = 'freshworks-crm';
 function copyIndexHtmlPlugin() {
   return {
     name: 'copy-index-html',
-    async buildEnd() {
+    async closeBundle() {
       const src = path.resolve(__dirname, 'public/index.html');
       const dest = path.resolve(__dirname, 'docs/index.html');
       try {
