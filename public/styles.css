@@ -23,7 +23,8 @@ body {
 }
 
 .kpis,
-.grid {
+.grid,
+.setup-grid {
   display: grid;
   gap: 1rem;
 }
@@ -37,8 +38,17 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
 }
 
+.setup {
+  margin-top: 2rem;
+}
+
+.setup-grid {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
 .kpi-card,
-.integration-card {
+.integration-card,
+.setup-card {
   background: white;
   border-radius: 12px;
   border: 1px solid #d8e1ec;
@@ -95,4 +105,16 @@ dt {
 dd {
   margin: 0 0 0.7rem;
   font-weight: 600;
+}
+
+pre {
+  overflow-x: auto;
+  padding: 0.75rem;
+  border-radius: 8px;
+  background: #0b132b;
+  color: #d6e4ff;
+}
+
+code {
+  font-family: Consolas, Monaco, monospace;
 }
