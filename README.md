@@ -1,61 +1,54 @@
 # freshworks-crm
 
-Base inicial de uma **página inicial operacional para escritório de advocacia**, preparada para evoluir para um dashboard com integrações de DataJud, Freshdesk, Freshworks CRM e Advise.
+Base inicial de uma **página operacional para escritório de advocacia**, preparada para evoluir para um dashboard com integrações de DataJud, Freshdesk, Freshworks CRM e Advise.
 
-## O que foi corrigido
+## Correção aplicada para GitHub Pages
 
-- Garantia de carregamento da página inicial com backend HTTP local e endpoint funcional de resumo.
-- Inclusão no frontend de uma seção completa para configuração do **SQL Server local no Windows 11**.
-- Disponibilização de script SQL pronto em `public/sql-server-setup.sql` para criar banco/tabela e carga inicial.
+O projeto agora funciona em 2 modos:
+
+1. **Modo servidor local (Node + SQLite)**
+   - A página busca dados em `./api/dashboard/summary`.
+2. **Modo GitHub Pages (estático)**
+   - Se a API não existir, a página usa fallback automático em `./dashboard-summary.json`.
+
+Também foram trocados caminhos absolutos (`/arquivo`) por relativos (`./arquivo`), evitando quebra em repositórios publicados em subpath no GitHub Pages.
 
 ## Estrutura
 
 - `public/`
   - `index.html`: home do dashboard + guia de configuração SQL Server.
-  - `main.js`: renderiza KPIs e cards a partir da API.
+  - `main.js`: renderiza KPIs e cards, com fallback automático para modo estático.
   - `styles.css`: layout e estilos.
+  - `dashboard-summary.json`: fallback estático para GitHub Pages.
   - `sql-server-setup.sql`: script inicial para SQL Server.
 
 - `src/`
-  - `server.js`: servidor HTTP, rota de saúde, rota de dados e arquivos estáticos.
-  - `services/database.js`: inicialização e consultas em SQLite local para ambiente de desenvolvimento.
-  - `services/dashboardService.js`: agregações dos indicadores.
-  - `config/integrations.js`: integrações base do escritório.
+  - `server.js`: servidor HTTP, rota de saúde, rota de dados e estáticos.
+  - `services/database.js`: inicialização e consultas em SQLite local.
+  - `services/dashboardService.js`: agregações de indicadores.
+  - `config/integrations.js`: catálogo base de integrações.
 
-## Banco local no seu PC
+## SQL Server no Windows 11 (você ainda não executou o script)
 
-### Desenvolvimento rápido
+Como você importou o repositório no SQL mas ainda não executou o script, rode primeiro:
 
-Por padrão, o projeto usa SQLite local em:
+- `public/sql-server-setup.sql` (ou `http://localhost:3000/sql-server-setup.sql` com servidor local ligado)
 
-```bash
-data/advocacia-dashboard.sqlite
+Depois valide no SSMS com:
+
+```sql
+USE AdvocaciaOperacional;
+GO
+SELECT COUNT(*) AS total_integracoes FROM dbo.integrations_status;
+GO
+SELECT TOP 4 integration_key, integration_name, status
+FROM dbo.integrations_status
+ORDER BY integration_name;
 ```
 
-Você pode mudar com:
+Esperado: `total_integracoes = 4`.
 
-```bash
-LOCAL_DB_PATH="C:/seu/caminho/advocacia-dashboard.sqlite"
-```
-
-### Preparação para SQL Server (Windows 11)
-
-1. Habilite TCP/IP no SQL Server Configuration Manager.
-2. Reinicie a instância SQL Server.
-3. Abra o SSMS e rode o script:
-   - `http://localhost:3000/sql-server-setup.sql`
-4. Configure credenciais (exemplo):
-
-```bash
-DB_CLIENT=sqlserver
-DB_HOST=localhost
-DB_PORT=1433
-DB_NAME=AdvocaciaOperacional
-DB_USER=sa
-DB_PASSWORD=SuaSenhaForte
-```
-
-## Como executar
+## Execução local
 
 ```bash
 node src/server.js
@@ -66,4 +59,4 @@ node src/server.js
 - `GET /` → página inicial
 - `GET /health` → saúde do servidor
 - `GET /api/dashboard/summary` → dados operacionais
-- `GET /sql-server-setup.sql` → script para SQL Server local
+- `GET /sql-server-setup.sql` → script para SQL Server

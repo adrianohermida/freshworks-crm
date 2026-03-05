@@ -118,3 +118,15 @@ pre {
 code {
   font-family: Consolas, Monaco, monospace;
 }
+
+
+.data-source {
+  display: inline-block;
+  margin-top: 0.5rem;
+  background: #eaf2ff;
+  color: #12315f;
+  border: 1px solid #c9d9f4;
+  border-radius: 999px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.85rem;
+}

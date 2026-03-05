@@ -29,21 +29,37 @@ function createIntegrationCard(item) {
   return node;
 }
 
-async function loadDashboard() {
-  const response = await fetch('/api/dashboard/summary');
+async function loadJsonOrThrow(url) {
+  const response = await fetch(url, { cache: 'no-store' });
   if (!response.ok) {
-    throw new Error('Não foi possível carregar os dados da página inicial.');
+    throw new Error(`Falha em ${url}`);
   }
 
   return response.json();
 }
 
+async function loadDashboard() {
+  try {
+    return await loadJsonOrThrow('./api/dashboard/summary');
+  } catch (_apiError) {
+    return loadJsonOrThrow('./dashboard-summary.json');
+  }
+}
+
 (async function bootstrapPage() {
   const kpiContainer = document.getElementById('kpis');
   const grid = document.getElementById('integration-grid');
+  const sourceBadge = document.getElementById('data-source');
 
   try {
     const data = await loadDashboard();
+
+    const isStaticMode = typeof data.integrations?.[0]?.last_sync === 'string'
+      && data.integrations[0].last_sync.includes('modo estático');
+
+    sourceBadge.textContent = isStaticMode
+      ? 'Modo GitHub Pages (dados estáticos)'
+      : 'Modo servidor local (API + SQLite)';
 
     const kpis = [
       ['Integrações', data.totals.integrations],
@@ -60,6 +76,7 @@ async function loadDashboard() {
       grid.appendChild(createIntegrationCard(item));
     });
   } catch (error) {
+    sourceBadge.textContent = 'Falha ao carregar dados';
     kpiContainer.innerHTML = '<p>Erro ao carregar indicadores.</p>';
     grid.innerHTML = `<p>${error.message}</p>`;
   }
