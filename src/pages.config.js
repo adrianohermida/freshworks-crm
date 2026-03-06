@@ -1,4 +1,9 @@
-<<<<<<< HEAD
+export const pagesConfig = {
+  home: {
+    path: '/',
+    title: 'Hermida Maia Advocacia',
+    subtitle: 'Atuação estratégica, técnica e humana para pessoas e empresas.'
+  }
 /**
  * pages.config.js - Page routing configuration
  * 
@@ -400,17 +405,8 @@ export const PAGES = {
     "YouTubeAnalytics": YouTubeAnalytics,
 }
 
-=======
->>>>>>> 2f421724b5b538636d7c96594c4de200fa0eed5b
 export const pagesConfig = {
-<<<<<<< HEAD
     mainPage: "Home",
     Pages: PAGES,
     Layout: __Layout,
-=======
-  home: {
-    path: '/',
-    title: 'Site principal restaurado'
-  }
->>>>>>> 2f421724b5b538636d7c96594c4de200fa0eed5b
 };

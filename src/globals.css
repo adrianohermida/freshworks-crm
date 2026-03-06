@@ -1,17 +1,25 @@
-<<<<<<< HEAD
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-=======
 :root {
   color-scheme: light;
   font-family: Inter, system-ui, sans-serif;
-  background: #f6f8fb;
-  color: #14213d;
+  background: #f8f6f3;
+  color: #2d1f13;
 }
->>>>>>> 2f421724b5b538636d7c96594c4de200fa0eed5b
 
-<<<<<<< HEAD
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+a {
+  color: #8b5e34;
+}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --navy-950: #0a0e1a;
   --navy-900: #0f1729;
@@ -63,13 +71,8 @@
   --header-bg: #ffffff;
   --header-text: #111827;
   --header-border: #e5e7eb;
-=======
-* {
-  box-sizing: border-box;
->>>>>>> 2f421724b5b538636d7c96594c4de200fa0eed5b
 }
 
-<<<<<<< HEAD
 [data-theme="dark"] {
   --bg-primary: var(--navy-900);
   --bg-secondary: var(--navy-800);
@@ -94,25 +97,15 @@
   --header-bg: var(--navy-900);
   --header-text: #f9fafb;
   --header-border: var(--navy-700);
-=======
-body {
-  margin: 0;
->>>>>>> 2f421724b5b538636d7c96594c4de200fa0eed5b
 }
 
-<<<<<<< HEAD
 @layer base {
   body {
     @apply bg-[var(--bg-primary)] text-[var(--text-primary)];
     transition: background-color 200ms, color 200ms;
   }
-=======
-a {
-  color: #1d4ed8;
->>>>>>> 2f421724b5b538636d7c96594c4de200fa0eed5b
 }
 
-<<<<<<< HEAD
 /* WCAG AA Contrast Validation */
 /* Light mode ratios:
  * text-primary (#111827) on bg-primary (#ffffff): 16.1:1 ✅
@@ -197,5 +190,3 @@ a {
   backdrop-filter: blur(4px) !important;
   -webkit-backdrop-filter: blur(4px) !important;
 }
-=======
->>>>>>> 2f421724b5b538636d7c96594c4de200fa0eed5b

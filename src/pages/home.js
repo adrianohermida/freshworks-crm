@@ -1,16 +1,50 @@
 export function renderHomePage() {
   return `
     <section class="setup">
-      <h2>Links úteis</h2>
+      <h2>Áreas de Atuação</h2>
       <div class="setup-grid">
         <article class="setup-card">
-          <h3>Status</h3>
-          <p>Home principal ativa (origem: <code>src/</code>).</p>
+          <h3>Cível e Empresarial</h3>
+          <p>Consultivo e contencioso para contratos, responsabilidade civil e relações empresariais.</p>
         </article>
         <article class="setup-card">
-          <h3>Script SQL</h3>
+          <h3>Trabalhista</h3>
+          <p>Defesa técnica em demandas trabalhistas e prevenção de riscos para empregadores.</p>
+        </article>
+        <article class="setup-card">
+          <h3>Família e Sucessões</h3>
+          <p>Atendimento humanizado para divórcios, guarda, inventários e planejamento sucessório.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="setup">
+      <h2>Diferenciais</h2>
+      <div class="setup-grid">
+        <article class="setup-card">
+          <h3>Atendimento Próximo</h3>
+          <p>Comunicação clara e acompanhamento contínuo em cada etapa do caso.</p>
+        </article>
+        <article class="setup-card">
+          <h3>Estratégia Jurídica</h3>
+          <p>Análise técnica orientada a resultado e mitigação de riscos.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="setup">
+      <h2>Contato</h2>
+      <div class="setup-grid">
+        <article class="setup-card">
+          <h3>Atendimento</h3>
+          <p>Segunda a sexta, 9h às 18h.</p>
+          <p><strong>E-mail:</strong> contato@hermidamaia.adv.br</p>
+          <p><strong>Telefone:</strong> (00) 0000-0000</p>
+        </article>
+        <article class="setup-card">
+          <h3>Base técnica</h3>
           <p>
-            Se necessário, acesse:
+            Script SQL de apoio:
             <a href="./sql-server-setup.sql" target="_blank" rel="noreferrer">sql-server-setup.sql</a>
           </p>
         </article>

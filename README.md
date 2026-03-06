@@ -1,30 +1,21 @@
 # freshworks-crm
 
-## Site definido dentro de `src/`
+## Ajuste refeito do site (Hermida Maia Advocacia)
 
-Conforme solicitado, o site foi reestruturado para usar **`src/` como origem principal**.
+Refiz a implementação do site existente em `src/`, sem criar nova página, com foco em estabilidade para GitHub Pages.
 
-### Estrutura principal
+## O que foi revisado
 
-- `src/index.html`
-- `src/main.jsx`
-- `src/App.jsx`
-- `src/Layout.jsx`
-- `src/pages/`
-- `src/pages.config.js`
-- `src/index.css`
-- `src/globals.css`
-- `src/api/`
-- `src/hooks/`
-- `src/lib/`
-- `src/utils/`
+- Estrutura da home mantida em `src/index.html`.
+- Fluxo de renderização revisado (`src/main.js` → `src/App.js` → `src/Layout.js` + `src/pages/home.js`).
+- `src/pages.config.js` agora é efetivamente usado pelo app.
+- Conteúdo da página ajustado para Hermida Maia Advocacia.
+- CSS refinado para melhorar legibilidade e consistência visual.
 
-## O que foi ajustado
+## Compatibilidade GitHub Pages
 
-- Servidor local (`src/server.js`) agora serve arquivos estáticos de `src/`.
-- Workflow do GitHub Pages agora publica a pasta `src/`.
-- `index.html` da raiz redireciona para `src/index.html`.
-- Conteúdo antigo em `public/` foi removido para evitar sobreposição/confusão.
+- Deploy continua publicando `src/` via workflow.
+- Módulos em `.js` (evitando problema de MIME comum com `.jsx` em hosting estático).
 
 ## Execução local
 
