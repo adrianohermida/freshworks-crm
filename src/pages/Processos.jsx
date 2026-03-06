@@ -1,61 +1,78 @@
 import React, { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ProcessosList from '@/components/advise/ProcessosList';
-import DetailedProcessHeader from '@/components/processos/DetailedProcessHeader';
-import { useProcessoDetail } from '@/components/processos/useProcessoDetail';
-import { List, FileText } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { createPageUrl } from '@/utils';
+import { base44 } from '@/api/base44Client';
+import ProcessosHeader from '@/components/processos/ProcessosHeader';
+import ProcessoSearchBar from '@/components/processos/ProcessoSearchBar';
+import ProcessoTable from '@/components/processos/ProcessoTable';
+import ProcessoListViewToggle from '@/components/processos/ProcessoListViewToggle';
+import ProcessoCardCompacta from '@/components/processos/ProcessoCardCompacta';
+import ProcessoCreateModal from '@/components/processos/ProcessoCreateModal';
+import LoadingState from '@/components/common/LoadingState';
+import { useProcessosData } from '@/components/processos/hooks/useProcessosData';
+import { useProcessosFilters } from '@/components/processos/hooks/useProcessosFilters';
+import { InstrumentedErrorBoundary } from '@/components/debug/InstrumentedErrorBoundary';
 
-export default function ProcessosPage() {
-  const [processoSelecionado, setProcessoSelecionado] = useState(null);
-  const { cabecalho, informacoes, isLoading } = useProcessoDetail(
-    processoSelecionado?.numeroProcesso,
-    processoSelecionado?.idFonteProcesso
-  );
+export default function Processos() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const queryClient = useQueryClient();
+  const [showModal, setShowModal] = useState(false);
+  const [viewMode, setViewMode] = useState('table');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filtros, setFiltros] = useState({ status: 'todos', cliente_id: 'todos' });
+
+  const { processos = [], clientes, escritorio, isLoading } = useProcessosData();
+  const processosFiltrados = useProcessosFilters(processos, clientes, searchTerm, filtros, []);
+
+  React.useEffect(() => {
+    if (escritorio) document.documentElement.setAttribute('data-escritorio', escritorio.id);
+  }, [escritorio]);
+
+  React.useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('new') === 'true') {
+      setShowModal(true);
+      window.history.replaceState({}, '', createPageUrl('Processos'));
+    }
+  }, [location.search]);
+
+  if (isLoading) return <LoadingState message="Carregando processos..." />;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-4 sm:p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        <div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2">
-            Processos
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Acompanhe todos os processos e seus andamentos da plataforma Advise
-          </p>
+    <InstrumentedErrorBoundary category="ROUTES">
+      <div className="min-h-screen bg-[var(--bg-secondary)] pb-20 md:pb-0">
+        <ProcessosHeader totalProcessos={processosFiltrados.length} onNovo={() => setShowModal(true)} />
+        <ProcessoSearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} filtros={filtros} onFiltrosChange={setFiltros} clientes={clientes} />
+        
+        <div className="sticky top-[180px] z-20 bg-[var(--bg-secondary)] border-b border-[var(--border-primary)] px-3 md:px-6 py-2">
+          <div className="max-w-7xl mx-auto flex justify-end">
+            <ProcessoListViewToggle view={viewMode} onViewChange={setViewMode} />
+          </div>
         </div>
 
-        <Tabs defaultValue="lista" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="lista" className="flex items-center gap-2">
-              <List className="w-4 h-4" />
-              Lista de Processos
-            </TabsTrigger>
-            <TabsTrigger value="detalhes" className="flex items-center gap-2">
-              <FileText className="w-4 h-4" />
-              Detalhes
-            </TabsTrigger>
-          </TabsList>
+        <div className="max-w-7xl mx-auto px-3 md:px-6 py-6">
+          {processosFiltrados.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-[var(--text-secondary)] mb-4">Nenhum processo encontrado</p>
+              <button onClick={() => setShowModal(true)} className="text-[var(--brand-primary)] hover:underline font-medium">
+                Criar novo processo
+              </button>
+            </div>
+          ) : viewMode === 'table' ? (
+            <ProcessoTable processos={processosFiltrados} clientes={clientes} />
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {processosFiltrados.map((p) => (
+                <ProcessoCardCompacta key={p.id} processo={p} cliente={clientes?.find((c) => c.id === p.cliente_id)} />
+              ))}
+            </div>
+          )}
+        </div>
 
-          <TabsContent value="lista" className="space-y-6">
-            <ProcessosList onSelectProcesso={setProcessoSelecionado} />
-          </TabsContent>
-
-          <TabsContent value="detalhes" className="space-y-6">
-            {processoSelecionado ? (
-              <DetailedProcessHeader
-                processo={processoSelecionado}
-                cabecalho={cabecalho}
-                informacoes={informacoes}
-                isLoading={isLoading}
-              />
-            ) : (
-              <div className="p-8 text-center text-gray-500 bg-white dark:bg-slate-900 rounded-lg border border-gray-200 dark:border-slate-700">
-                <p>Selecione um processo na aba "Lista de Processos" para ver detalhes</p>
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
+        <ProcessoCreateModal open={showModal} onClose={() => setShowModal(false)} onSubmit={(data) => setShowModal(false)} escritorioId={escritorio?.id} />
       </div>
-    </div>
+    </InstrumentedErrorBoundary>
   );
 }

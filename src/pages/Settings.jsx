@@ -1,225 +1,110 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
+import { base44 } from '@/api/base44Client';
+import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import AutoResponderManager from '../components/tickets/AutoResponderManager';
-import TicketRulesManager from '../components/tickets/TicketRulesManager';
-import NotificationSettings from '../components/settings/NotificationSettings';
-import WebhookManager from '../components/settings/WebhookManager';
-import SlackIntegration from '../components/settings/SlackIntegration';
-import DashboardBuilder from '../components/dashboard/DashboardBuilder';
-import BulkExportImport from '../components/tickets/BulkExportImport';
-import AdvancedMetricsPanel from '../components/analytics/AdvancedMetricsPanel';
-import SLAPolicyManager from '../components/sla/SLAPolicyManager';
-import AuditLogViewer from '../components/audit/AuditLogViewer';
-import PerformanceMetrics from '../components/analytics/PerformanceMetrics';
-import SavedFiltersManager from '../components/filters/SavedFiltersManager';
-import ReportBuilder from '../components/reports/ReportBuilder';
-import KnowledgeBaseViewer from '../components/knowledge/KnowledgeBaseViewer';
-import KnowledgeBaseEditor from '../components/knowledge/KnowledgeBaseEditor';
-import PortalConfigManager from '../components/portal/PortalConfigManager';
-import EmailTemplateManager from '../components/email/EmailTemplateManager';
-import EmailNotificationSetup from '../components/email/EmailNotificationSetup';
-import ThemeManager from '../components/customization/ThemeManager';
-import BrandingManager from '../components/customization/BrandingManager';
-import APIDocumentation from '../components/api/APIDocumentation';
-import APIKeyManager from '../components/api/APIKeyManager';
-import WebhookBuilder from '../components/webhooks/WebhookBuilder';
-import WebhookLogs from '../components/webhooks/WebhookLogs';
-import LanguageManager from '../components/i18n/LanguageManager';
-import SurveyManager from '../components/settings/SurveyManager';
-import CustomFieldsManager from '../components/settings/CustomFieldsManager';
-import AutomationBuilder from '../components/settings/AutomationBuilder';
-import KnowledgeBaseManager from '../components/settings/KnowledgeBaseManager';
-import AdvancedFieldBuilderIntegration from '../components/builders/AdvancedFieldBuilderIntegration';
-import AdvancedRuleBuilderIntegration from '../components/builders/AdvancedRuleBuilderIntegration';
-import AttachmentManagerIntegration from '../components/builders/AttachmentManagerIntegration';
-import LaunchChecklist from '../components/documentation/LaunchChecklist';
-import ReleaseNotesV1 from '../components/documentation/ReleaseNotesV1';
-import SecurityAuditReport from '../components/documentation/SecurityAuditReport';
-import PageLayout from '../components/common/PageLayout';
-import Analytics from '../components/Analytics';
+import Breadcrumb from '@/components/seo/Breadcrumb';
+import SettingsHeader from '@/components/settings/SettingsHeader';
+import IntegrationSection from '@/components/settings/IntegrationSection';
+import CalendarSettings from '@/components/settings/CalendarSettings';
+import EmailPreferences from '@/components/settings/EmailPreferences';
+import EmailSecretsManager from '@/components/settings/EmailSecretsManager';
+import WorkerImapConfig from '@/components/settings/WorkerImapConfig';
 
-export default function SettingsPage() {
+export default function Settings() {
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  const defaultTab = urlParams.get('tab') || 'preferences';
+
+  useEffect(() => {
+    loadUser();
+    handleOAuthCallback();
+  }, []);
+
+  const handleOAuthCallback = () => {
+    const oauthSuccess = urlParams.get('oauth_success');
+    const oauthError = urlParams.get('error');
+    
+    if (oauthSuccess === 'true') {
+      toast.success('Integração conectada com sucesso!');
+      window.history.replaceState({}, '', window.location.pathname);
+      setTimeout(() => window.location.reload(), 1000);
+    } else if (oauthError) {
+      toast.error(`Erro na integração: ${oauthError}`);
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  };
+
+  const loadUser = async () => {
+    const currentUser = await base44.auth.me();
+    setUser(currentUser);
+    setLoading(false);
+  };
+
+  if (loading) return null;
+
+  const isAdmin = user?.role === 'admin' || user?.email === 'adrianohermida@gmail.com';
+
   return (
-    <>
-      <Analytics eventName="settings_page_view" />
-      <PageLayout title="Configurações" subtitle="Gerencie automações, respostas e notificações do seu sistema">
-        <Tabs defaultValue="responders" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6 md:grid-cols-8 lg:grid-cols-12 text-xs overflow-x-auto">
-            <TabsTrigger value="launch">🚀 Checklist</TabsTrigger>
-            <TabsTrigger value="release-notes">📋 Release</TabsTrigger>
-            <TabsTrigger value="security">🔒 Security</TabsTrigger>
-            <TabsTrigger value="responders">Auto-Responders</TabsTrigger>
-            <TabsTrigger value="rules">Regras</TabsTrigger>
-            <TabsTrigger value="notifications">Notificações</TabsTrigger>
-            <TabsTrigger value="webhooks">Webhooks</TabsTrigger>
-            <TabsTrigger value="slack">Slack</TabsTrigger>
-            <TabsTrigger value="dashboards">Dashboards</TabsTrigger>
-            <TabsTrigger value="export">Export</TabsTrigger>
-            <TabsTrigger value="sla">SLA</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
-            <TabsTrigger value="performance">Performance</TabsTrigger>
-            <TabsTrigger value="audit">Auditoria</TabsTrigger>
-            <TabsTrigger value="filters">Filtros</TabsTrigger>
-            <TabsTrigger value="reports">Relatórios</TabsTrigger>
-            <TabsTrigger value="surveys">📊 Surveys</TabsTrigger>
-            <TabsTrigger value="custom-fields">⚙️ Campos Custom</TabsTrigger>
-            <TabsTrigger value="automation">🤖 Automação</TabsTrigger>
-            <TabsTrigger value="kb-manager">📚 KB Manager</TabsTrigger>
-            <TabsTrigger value="kb-editor">📝 Criar KB</TabsTrigger>
-            <TabsTrigger value="kb-viewer">📚 Base de Conhecimento</TabsTrigger>
-            <TabsTrigger value="portal">🌐 Portal Cliente</TabsTrigger>
-            <TabsTrigger value="email-templates">📧 Templates</TabsTrigger>
-            <TabsTrigger value="email-setup">📬 Email</TabsTrigger>
-            <TabsTrigger value="themes">🎨 Temas</TabsTrigger>
-            <TabsTrigger value="branding">🏢 Branding</TabsTrigger>
-            <TabsTrigger value="api-keys">🔑 Chaves API</TabsTrigger>
-            <TabsTrigger value="api-docs">📖 API Docs</TabsTrigger>
-            <TabsTrigger value="field-builder">🔧 Field Builder</TabsTrigger>
-            <TabsTrigger value="rule-builder">📋 Rule Builder</TabsTrigger>
-            <TabsTrigger value="attachment">📎 Attachments</TabsTrigger>
-            <TabsTrigger value="languages">🌐 Idiomas</TabsTrigger>
-            </TabsList>
+    <div className="min-h-screen bg-[var(--bg-primary)] py-8 px-4">
+      <div className="max-w-4xl mx-auto">
+        <Breadcrumb 
+          items={[
+            { label: 'Configurações', url: createPageUrl('Configuracoes') },
+            { label: 'Geral' }
+          ]} 
+        />
+        <SettingsHeader userName={user?.full_name} />
+        
+        <Tabs defaultValue={defaultTab} className="mt-6">
+          <TabsList>
+            <TabsTrigger value="preferences">Preferências</TabsTrigger>
+            <TabsTrigger value="integrations">Integrações</TabsTrigger>
+            {isAdmin && (
+              <TabsTrigger value="email">Email (IMAP/SMTP)</TabsTrigger>
+            )}
+            {isAdmin && (
+              <TabsTrigger value="email-worker">Worker IMAP</TabsTrigger>
+            )}
+            {isAdmin && (
+              <TabsTrigger value="calendar">Agenda</TabsTrigger>
+            )}
+          </TabsList>
 
-          <TabsContent value="launch">
-            <LaunchChecklist />
+          <TabsContent value="preferences" className="mt-6">
+            <EmailPreferences 
+              userEmail={user?.email} 
+              escritorioId={user?.escritorio_id || '6948bed65e7da7a1c1eb64d1'} 
+            />
           </TabsContent>
 
-          <TabsContent value="release-notes">
-            <ReleaseNotesV1 />
+          <TabsContent value="integrations" className="mt-6">
+            <IntegrationSection />
           </TabsContent>
 
-          <TabsContent value="security">
-            <SecurityAuditReport />
-          </TabsContent>
+          {isAdmin && (
+            <TabsContent value="email" className="mt-6">
+              <EmailSecretsManager />
+            </TabsContent>
+          )}
 
-          <TabsContent value="responders">
-            <AutoResponderManager />
-          </TabsContent>
+          {isAdmin && (
+            <TabsContent value="email-worker" className="mt-6">
+              <WorkerImapConfig />
+            </TabsContent>
+          )}
 
-          <TabsContent value="rules">
-            <TicketRulesManager />
-          </TabsContent>
-
-          <TabsContent value="notifications">
-            <NotificationSettings />
-          </TabsContent>
-
-          <TabsContent value="webhooks">
-            <WebhookManager />
-          </TabsContent>
-
-          <TabsContent value="slack">
-            <SlackIntegration />
-          </TabsContent>
-
-          <TabsContent value="dashboards">
-            <DashboardBuilder />
-          </TabsContent>
-
-          <TabsContent value="export">
-            <BulkExportImport />
-          </TabsContent>
-
-          <TabsContent value="sla">
-            <SLAPolicyManager />
-          </TabsContent>
-
-          <TabsContent value="analytics">
-            <AdvancedMetricsPanel />
-          </TabsContent>
-
-          <TabsContent value="performance">
-            <PerformanceMetrics />
-          </TabsContent>
-
-          <TabsContent value="audit">
-            <AuditLogViewer />
-          </TabsContent>
-
-          <TabsContent value="filters">
-            <SavedFiltersManager />
-          </TabsContent>
-
-          <TabsContent value="reports">
-            <ReportBuilder />
-          </TabsContent>
-
-          <TabsContent value="kb-editor">
-            <KnowledgeBaseEditor />
-          </TabsContent>
-
-          <TabsContent value="kb-viewer">
-            <KnowledgeBaseViewer />
-          </TabsContent>
-
-          <TabsContent value="portal">
-            <PortalConfigManager />
-          </TabsContent>
-
-          <TabsContent value="email-templates">
-            <EmailTemplateManager />
-          </TabsContent>
-
-          <TabsContent value="email-setup">
-            <EmailNotificationSetup />
-          </TabsContent>
-
-          <TabsContent value="themes">
-            <ThemeManager />
-          </TabsContent>
-
-          <TabsContent value="branding">
-            <BrandingManager />
-          </TabsContent>
-
-          <TabsContent value="api-keys">
-            <APIKeyManager />
-          </TabsContent>
-
-          <TabsContent value="api-docs">
-            <APIDocumentation />
-          </TabsContent>
-
-          <TabsContent value="webhooks">
-            <div className="space-y-6">
-              <WebhookBuilder />
-              <WebhookLogs />
-            </div>
-          </TabsContent>
-
-          <TabsContent value="surveys">
-            <SurveyManager />
-          </TabsContent>
-
-          <TabsContent value="custom-fields">
-            <CustomFieldsManager />
-          </TabsContent>
-
-          <TabsContent value="automation">
-            <AutomationBuilder />
-          </TabsContent>
-
-          <TabsContent value="kb-manager">
-            <KnowledgeBaseManager />
-          </TabsContent>
-
-          <TabsContent value="field-builder">
-            <AdvancedFieldBuilderIntegration />
-          </TabsContent>
-
-          <TabsContent value="rule-builder">
-            <AdvancedRuleBuilderIntegration />
-          </TabsContent>
-
-          <TabsContent value="attachment">
-            <AttachmentManagerIntegration />
-          </TabsContent>
-
-          <TabsContent value="languages">
-            <LanguageManager />
-          </TabsContent>
+          {isAdmin && (
+            <TabsContent value="calendar" className="mt-6">
+              <CalendarSettings user={user} onUpdate={loadUser} />
+            </TabsContent>
+          )}
         </Tabs>
-      </PageLayout>
-    </>
+      </div>
+    </div>
   );
 }

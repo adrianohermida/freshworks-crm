@@ -1,238 +1,253 @@
 import React, { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
-import { User, Mail, Phone, MapPin, Save, AlertCircle, CheckCircle } from 'lucide-react';
-import Card from '@/components/aetherlab/Card';
-import Button from '@/components/aetherlab/Button';
+import { createPageUrl } from '@/utils';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { User, Save, Settings, LogOut, Download, ChevronLeft } from 'lucide-react';
+import { toast } from 'sonner';
+import ResumeLoader from '@/components/common/ResumeLoader';
+import SingleHandNav from '@/components/mobile/SingleHandNav';
+import AvatarUpload from '@/components/profile/AvatarUpload';
+import DadosPessoais from '@/components/profile/DadosPessoais';
+import RedesSociaisPessoais from '@/components/profile/RedesSociaisPessoais';
+import InscricoesOABPessoais from '@/components/profile/InscricoesOABPessoais';
 
-export default function ProfilePage() {
-  const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
-  const [message, setMessage] = useState({ type: '', text: '' });
-  const [formData, setFormData] = useState({
-    full_name: '',
-    email: '',
-    phone: '',
-    city: '',
-    state: '',
+export default function Profile() {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = useState('dados');
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({});
+
+  const { data: user, isLoading } = useQuery({
+    queryKey: ['user'],
+    queryFn: () => base44.auth.me(),
+    gcTime: 1000 * 60 * 5
   });
 
   useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const currentUser = await base44.auth.me();
-        setUser(currentUser);
-        setFormData({
-          full_name: currentUser.full_name || '',
-          email: currentUser.email || '',
-          phone: currentUser.phone || '',
-          city: currentUser.city || '',
-          state: currentUser.state || '',
-        });
-      } catch (err) {
-        setMessage({ type: 'error', text: 'Erro ao carregar perfil' });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadUser();
-  }, []);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSave = async () => {
-    setIsSaving(true);
-    try {
-      await base44.auth.updateMe({
-        phone: formData.phone,
-        city: formData.city,
-        state: formData.state,
-      });
-      setMessage({ type: 'success', text: 'Perfil atualizado com sucesso!' });
-      setTimeout(() => setMessage({ type: '', text: '' }), 3000);
-    } catch (err) {
-      setMessage({ type: 'error', text: 'Erro ao salvar perfil: ' + err.message });
-    } finally {
-      setIsSaving(false);
+    if (user) {
+      setFormData(user);
     }
+  }, [user]);
+
+  const updateMutation = useMutation({
+    mutationFn: (data) => base44.auth.updateMe(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user'] });
+      setIsEditing(false);
+      toast.success('Perfil atualizado com sucesso');
+    },
+    onError: () => {
+      toast.error('Erro ao atualizar perfil');
+    }
+  });
+
+  const handleExportData = async () => {
+    const data = { usuario: user };
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `perfil-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
   };
 
-  if (isLoading) {
-    return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ color: 'var(--color-body)' }}>Carregando perfil...</p>
-      </div>
-    );
-  }
+  const handleChange = (field, value) => {
+    setFormData({...formData, [field]: value});
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    updateMutation.mutate(formData);
+  };
+
+  if (isLoading) return <ResumeLoader />;
+  if (!user) return navigate(createPageUrl("Home"));
+  if (user.role !== 'admin') return navigate(createPageUrl("MeuPerfil"));
+
+  const navItems = [
+    { id: 'dados', label: 'Dados Pessoais', icon: User },
+    { id: 'redes', label: 'Redes Sociais', icon: User },
+    { id: 'oab', label: 'Inscrição OAB', icon: User },
+    { id: 'seguranca', label: 'Segurança', icon: Settings },
+  ];
 
   return (
-    <div style={{ backgroundColor: 'var(--color-light)', minHeight: '100vh', padding: 'var(--spacing-lg)' }}>
-      <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-        {/* Header */}
-        <div style={{ marginBottom: 'var(--spacing-2xl)' }}>
-          <h1 style={{ fontSize: 'var(--font-size-3xl)', fontWeight: 'var(--font-weight-bold)', color: 'var(--color-heading)', margin: 0 }}>
-            Meu Perfil
-          </h1>
-          <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-body)', marginTop: 'var(--spacing-sm)' }}>
-            Gerencie suas informações pessoais
-          </p>
-        </div>
-
-        {/* Messages */}
-        {message.text && (
-          <Card variant={message.type === 'success' ? 'default' : 'default'} style={{ marginBottom: 'var(--spacing-lg)', borderLeft: `4px solid ${message.type === 'success' ? '#10B981' : '#EF4444'}` }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-md)' }}>
-              {message.type === 'success' ? (
-                <CheckCircle style={{ width: '20px', height: '20px', color: '#10B981', flexShrink: 0 }} />
-              ) : (
-                <AlertCircle style={{ width: '20px', height: '20px', color: '#EF4444', flexShrink: 0 }} />
-              )}
-              <p style={{ margin: 0, color: message.type === 'success' ? '#10B981' : '#EF4444' }}>
-                {message.text}
-              </p>
+    <div className="min-h-screen bg-[var(--bg-secondary)]">
+      {/* Header */}
+      <div className="bg-[var(--bg-primary)] border-b border-[var(--border-primary)] p-4 md:p-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center gap-3 mb-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate(createPageUrl('MeuPainel'))}
+              className="gap-2 text-[var(--brand-primary)]"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </Button>
+            <h1 className="text-2xl md:text-3xl font-bold text-[var(--text-primary)]">
+              Meu Perfil
+            </h1>
+          </div>
+          {!isEditing ? (
+            <Button 
+              onClick={() => setIsEditing(true)}
+              className="bg-[var(--brand-primary)] text-sm"
+            >
+              Editar Perfil
+            </Button>
+          ) : (
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  setIsEditing(false);
+                  setFormData(user);
+                }}
+                size="sm"
+              >
+                Cancelar
+              </Button>
+              <Button 
+                onClick={handleSubmit} 
+                disabled={updateMutation.isPending}
+                className="bg-[var(--brand-primary)] text-sm"
+              >
+                <Save className="w-4 h-4 mr-2" />
+                Salvar
+              </Button>
             </div>
+          )}
+        </div>
+      </div>
+
+      {/* Mobile Tab Nav */}
+      <div className="md:hidden border-b border-[var(--border-primary)] bg-[var(--bg-primary)]">
+        <div className="max-w-6xl mx-auto">
+          <SingleHandNav
+            items={navItems}
+            activeId={activeTab}
+            onChange={setActiveTab}
+          />
+        </div>
+      </div>
+
+      {/* Desktop Tabs */}
+      <div className="hidden md:block border-b border-[var(--border-primary)] bg-[var(--bg-primary)]">
+        <div className="max-w-6xl mx-auto px-4 md:px-6 flex gap-4">
+          {navItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setActiveTab(item.id)}
+              className={`py-3 px-4 border-b-2 transition-colors ${
+                activeTab === item.id
+                  ? 'border-[var(--brand-primary)] text-[var(--brand-primary)]'
+                  : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="max-w-6xl mx-auto p-4 md:p-6 pb-24 md:pb-6 space-y-6">
+        {/* Dados Pessoais Tab */}
+        {activeTab === 'dados' && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+            <div className="lg:col-span-1">
+              <Card className="bg-[var(--bg-elevated)]">
+                <CardContent className="p-4 sm:p-6">
+                  <AvatarUpload 
+                    user={formData} 
+                    onChange={handleChange} 
+                    disabled={!isEditing} 
+                  />
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="lg:col-span-2">
+              <Card className="bg-[var(--bg-elevated)]">
+                <CardContent className="p-4 sm:p-6">
+                  <DadosPessoais 
+                    data={formData} 
+                    onChange={handleChange} 
+                    disabled={!isEditing} 
+                  />
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        )}
+
+        {/* Redes Sociais Tab */}
+        {activeTab === 'redes' && (
+          <Card className="bg-[var(--bg-elevated)]">
+            <CardContent className="p-4 sm:p-6">
+              <RedesSociaisPessoais 
+                data={formData} 
+                onChange={handleChange} 
+                disabled={!isEditing} 
+              />
+            </CardContent>
           </Card>
         )}
 
-        {/* Profile Card */}
-        <Card variant="default">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'var(--spacing-lg)' }}>
-            {/* Read-only fields */}
-            <div style={{ gridColumn: '1 / -1' }}>
-              <label style={{ display: 'block', fontSize: 'var(--font-size-sm)', fontWeight: '600', color: 'var(--color-heading)', marginBottom: 'var(--spacing-sm)' }}>
-                <User style={{ width: '14px', height: '14px', marginRight: '6px', display: 'inline' }} />
-                Nome Completo
-              </label>
-              <input
-                type="text"
-                value={formData.full_name}
-                disabled
-                style={{
-                  width: '100%', padding: 'var(--spacing-md)', borderRadius: 'var(--border-radius-md)',
-                  border: '1px solid var(--color-border)', backgroundColor: 'var(--color-gray-100)',
-                  color: 'var(--color-body)', cursor: 'not-allowed', fontSize: 'var(--font-size-sm)',
-                }}
+        {/* OAB Tab */}
+        {activeTab === 'oab' && (
+          <Card className="bg-[var(--bg-elevated)]">
+            <CardContent className="p-4 sm:p-6">
+              <InscricoesOABPessoais 
+                data={formData} 
+                onChange={handleChange} 
+                disabled={!isEditing} 
               />
-              <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-body)', marginTop: '4px', opacity: 0.6 }}>
-                Não pode ser alterado
-              </p>
-            </div>
+            </CardContent>
+          </Card>
+        )}
 
-            <div style={{ gridColumn: '1 / -1' }}>
-              <label style={{ display: 'block', fontSize: 'var(--font-size-sm)', fontWeight: '600', color: 'var(--color-heading)', marginBottom: 'var(--spacing-sm)' }}>
-                <Mail style={{ width: '14px', height: '14px', marginRight: '6px', display: 'inline' }} />
-                Email
-              </label>
-              <input
-                type="email"
-                value={formData.email}
-                disabled
-                style={{
-                  width: '100%', padding: 'var(--spacing-md)', borderRadius: 'var(--border-radius-md)',
-                  border: '1px solid var(--color-border)', backgroundColor: 'var(--color-gray-100)',
-                  color: 'var(--color-body)', cursor: 'not-allowed', fontSize: 'var(--font-size-sm)',
-                }}
-              />
-              <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-body)', marginTop: '4px', opacity: 0.6 }}>
-                Não pode ser alterado
-              </p>
-            </div>
-
-            {/* Editable fields */}
-            <div>
-              <label style={{ display: 'block', fontSize: 'var(--font-size-sm)', fontWeight: '600', color: 'var(--color-heading)', marginBottom: 'var(--spacing-sm)' }}>
-                <Phone style={{ width: '14px', height: '14px', marginRight: '6px', display: 'inline' }} />
-                Telefone
-              </label>
-              <input
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                placeholder="(XX) XXXXX-XXXX"
-                style={{
-                  width: '100%', padding: 'var(--spacing-md)', borderRadius: 'var(--border-radius-md)',
-                  border: '1px solid var(--color-border)', fontSize: 'var(--font-size-sm)',
-                  color: 'var(--color-heading)',
-                }}
-              />
-            </div>
-
-            <div>
-              <label style={{ display: 'block', fontSize: 'var(--font-size-sm)', fontWeight: '600', color: 'var(--color-heading)', marginBottom: 'var(--spacing-sm)' }}>
-                Estado
-              </label>
-              <input
-                type="text"
-                name="state"
-                value={formData.state}
-                onChange={handleChange}
-                placeholder="SP, RJ, MG..."
-                style={{
-                  width: '100%', padding: 'var(--spacing-md)', borderRadius: 'var(--border-radius-md)',
-                  border: '1px solid var(--color-border)', fontSize: 'var(--font-size-sm)',
-                  color: 'var(--color-heading)',
-                }}
-              />
-            </div>
-
-            <div style={{ gridColumn: '1 / -1' }}>
-              <label style={{ display: 'block', fontSize: 'var(--font-size-sm)', fontWeight: '600', color: 'var(--color-heading)', marginBottom: 'var(--spacing-sm)' }}>
-                <MapPin style={{ width: '14px', height: '14px', marginRight: '6px', display: 'inline' }} />
-                Cidade
-              </label>
-              <input
-                type="text"
-                name="city"
-                value={formData.city}
-                onChange={handleChange}
-                placeholder="São Paulo, Rio de Janeiro..."
-                style={{
-                  width: '100%', padding: 'var(--spacing-md)', borderRadius: 'var(--border-radius-md)',
-                  border: '1px solid var(--color-border)', fontSize: 'var(--font-size-sm)',
-                  color: 'var(--color-heading)',
-                }}
-              />
-            </div>
-
-            {/* Save Button */}
-            <div style={{ gridColumn: '1 / -1', display: 'flex', gap: 'var(--spacing-md)', marginTop: 'var(--spacing-lg)' }}>
-              <Button
-                onClick={handleSave}
-                disabled={isSaving}
-                variant="primary"
-                style={{ minWidth: '120px' }}
-              >
-                <Save style={{ width: '14px', height: '14px', marginRight: '6px' }} />
-                {isSaving ? 'Salvando...' : 'Salvar Alterações'}
-              </Button>
-            </div>
-          </div>
-        </Card>
-
-        {/* User Info Card */}
-        {user && (
-          <Card variant="default" style={{ marginTop: 'var(--spacing-lg)' }}>
-            <h3 style={{ fontSize: 'var(--font-size-base)', fontWeight: 'var(--font-weight-semibold)', color: 'var(--color-heading)', marginBottom: 'var(--spacing-lg)' }}>
-              Informações da Conta
-            </h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'var(--spacing-lg)', fontSize: 'var(--font-size-sm)' }}>
-              <div>
-                <p style={{ color: 'var(--color-body)', margin: '0 0 4px', fontWeight: '500' }}>Role</p>
-                <p style={{ color: 'var(--color-heading)', margin: 0, fontWeight: '600' }}>
-                  {user.role === 'admin' ? '🔐 Admin' : '👤 Usuário'}
-                </p>
+        {/* Segurança Tab */}
+        {activeTab === 'seguranca' && (
+          <Card className="bg-[var(--bg-elevated)]">
+            <CardContent className="p-6">
+              <h3 className="font-semibold mb-4 text-[var(--text-primary)]">Segurança</h3>
+              <div className="space-y-4">
+                <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                  <p className="text-sm text-[var(--text-secondary)] mb-3">
+                    Exportar dados pessoais para arquivo seguro
+                  </p>
+                  <Button 
+                    onClick={handleExportData}
+                    variant="outline"
+                    size="sm"
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Exportar Dados
+                  </Button>
+                </div>
+                <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                  <p className="text-sm text-[var(--text-secondary)] mb-3">
+                    Sair da sua conta
+                  </p>
+                  <Button 
+                    onClick={() => base44.auth.logout(createPageUrl('Home'))}
+                    variant="destructive"
+                    size="sm"
+                  >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Sair
+                  </Button>
+                </div>
               </div>
-              <div>
-                <p style={{ color: 'var(--color-body)', margin: '0 0 4px', fontWeight: '500' }}>ID</p>
-                <p style={{ color: 'var(--color-heading)', margin: 0, fontFamily: 'monospace', fontSize: 'var(--font-size-xs)', wordBreak: 'break-all' }}>
-                  {user.id}
-                </p>
-              </div>
-            </div>
+            </CardContent>
           </Card>
         )}
       </div>
