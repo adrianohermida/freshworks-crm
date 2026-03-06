@@ -1,0 +1,43 @@
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 3rem;
+}
+
+.hero {
+  padding: 1rem 0 0.5rem;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.8rem;
+  color: #8b5e34;
+}
+
+.subtitle {
+  max-width: 720px;
+  color: #4b3727;
+}
+
+.setup {
+  margin-top: 2rem;
+}
+
+.setup-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.setup-card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e8dccf;
+  padding: 1rem;
+  box-shadow: 0 4px 12px rgb(66 34 9 / 6%);
+}
+
+.setup-card h3 {
+  margin-top: 0;
+}
