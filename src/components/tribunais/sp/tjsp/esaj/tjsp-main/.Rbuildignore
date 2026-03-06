@@ -1,0 +1,10 @@
+^README\.Rmd$
+^LICENSE\.md$
+^.*\.Rproj$
+^\.Rproj\.user$
+^data-raw$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^apagar\.R$
+^.devcontainer

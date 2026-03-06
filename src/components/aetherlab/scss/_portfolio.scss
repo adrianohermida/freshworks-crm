@@ -1,0 +1,152 @@
+/*======================================
+   Portfolio CSS
+========================================*/
+.portfolio-section.section {}
+
+.portfolio-section .portfolio-btn-wrapper {
+    margin-bottom: 0;
+    text-align: center;
+}
+
+.portfolio-section .section-title {
+    margin-bottom: 60px;
+
+    @media #{$md} {
+        margin-bottom: 50px;
+    }
+
+    @media #{$xs} {
+        margin-bottom: 40px;
+    }
+}
+
+.grid {
+    margin-top: 80px;
+
+    @media #{$md} {
+        margin-top: 60px;
+    }
+
+    @media #{$xs} {
+        margin-top: 40px;
+    }
+}
+
+.portfolio-section .portfolio-btn-wrapper button {
+    padding: 10px 23px;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    background: #eff2f9;
+    color: #051441;
+    border-radius: 6px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    -webkit-transition: all .3s ease-out 0s;
+    transition: all .3s ease-out 0s;
+
+
+    &:hover {
+        background: $theme-color;
+        color: #fff
+    }
+}
+
+.portfolio-section .portfolio-btn-wrapper button.active {
+    background: $theme-color;
+    color: #fff
+}
+
+@media only screen and (min-width:768px) and (max-width:991px) {
+    .portfolio-section .portfolio-btn-wrapper button {
+        margin-right: 10px;
+        padding: 7px 18px;
+    }
+}
+
+@media(max-width:767px) {
+    .portfolio-section .portfolio-btn-wrapper button {
+        margin-right: 10px;
+        padding: 7px 18px;
+    }
+}
+
+.portfolio-section .portfolio-btn-wrapper button:last-child {
+    margin-right: 0
+}
+
+.portfolio-item-wrapper {
+    position: relative;
+    border-radius: 6px;
+    overflow: hidden;
+
+    margin-bottom: 30px;
+
+    &:hover {
+        .portfolio-img img {
+            transform: scale(1.1);
+        }
+    }
+
+}
+
+.portfolio-item-wrapper .portfolio-img img {
+    width: 100%;
+    transition: all 0.4s ease;
+}
+
+.portfolio-item-wrapper .portfolio-overlay {
+    position: absolute;
+    left: 15px;
+    bottom: 15px;
+    background-color: $white;
+    padding: 20px 35px 20px 20px;
+    border-radius: 5px;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.096);
+    display: inline-block;
+
+    .overlay-content h4 {
+        margin-top: 5px;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 28px;
+    }
+}
+
+.portfolio-item-wrapper .portfolio-overlay .overlay-content .border-btn {
+    padding: 8px 27px;
+    color: #fff;
+    border: 2px solid #fff
+}
+
+.portfolio-item-wrapper .portfolio-overlay .overlay-content .border-btn:hover {
+    color: $theme-color;
+    background: #fff
+}
+
+.single-portfolio .single-portfolio-img {
+    border-radius: 0;
+    overflow: hidden
+}
+
+.single-portfolio .single-portfolio-img img {
+    width: 100%
+}
+
+.project-info-box ul li {
+    margin-bottom: 15px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    font-size: 14px
+}
+
+.project-info-box ul li:last-child {
+    margin-bottom: 0
+}
+
+.project-info-box ul li .destination {
+    width: 40%;
+    color: #051441;
+    text-transform: uppercase
+}
