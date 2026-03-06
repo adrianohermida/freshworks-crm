@@ -1,24 +1,24 @@
 # freshworks-crm
 
-## Site restaurado (sem dashboard)
+## Auditoria de rastros legados
 
-Conforme solicitado, o dashboard foi removido e o site principal do repositório foi restabelecido.
+Foi realizada uma auditoria completa para identificar rastros do módulo legado criado anteriormente.
 
-### O que foi ajustado
+### Resultado da auditoria
 
-- `public/index.html` agora exibe apenas a home principal.
-- `public/main.js` não possui mais lógica de dashboard.
-- Backend simplificado em `src/server.js` para servir site estático e `GET /health`.
-- Removidos arquivos e serviços de dashboard:
-  - `src/services/dashboardService.js`
-  - `src/services/database.js`
-  - `src/config/integrations.js`
+Foram encontrados rastros apenas em conteúdo textual e script SQL de exemplo. Esses pontos foram corrigidos.
 
-## GitHub Pages
+### Correções aplicadas
 
-O deploy continua publicado a partir da pasta `public/` via workflow:
+- `public/index.html` revisado para remover qualquer referência a módulo legado.
+- `public/sql-server-setup.sql` reescrito para estrutura neutra (`FreshworksSite` + `site_settings`).
+- `README.md` atualizado com status pós-auditoria.
 
-- `.github/workflows/deploy-pages.yml`
+## Estado atual
+
+- Site principal ativo: `public/index.html`
+- Script SQL neutro: `public/sql-server-setup.sql`
+- Servidor local estático + healthcheck: `src/server.js`
 
 ## Execução local
 

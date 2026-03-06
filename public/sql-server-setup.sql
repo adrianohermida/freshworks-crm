@@ -1,52 +1,44 @@
 /*
   Script inicial para SQL Server local (Windows 11)
-  Execute no SSMS conectado à sua instância local.
+  Estrutura mínima para o site institucional.
 */
 
-IF DB_ID('AdvocaciaOperacional') IS NULL
+IF DB_ID('FreshworksSite') IS NULL
 BEGIN
-  CREATE DATABASE AdvocaciaOperacional;
+  CREATE DATABASE FreshworksSite;
 END
 GO
 
-USE AdvocaciaOperacional;
+USE FreshworksSite;
 GO
 
-IF OBJECT_ID('dbo.integrations_status', 'U') IS NULL
+IF OBJECT_ID('dbo.site_settings', 'U') IS NULL
 BEGIN
-  CREATE TABLE dbo.integrations_status (
+  CREATE TABLE dbo.site_settings (
     id INT IDENTITY(1,1) PRIMARY KEY,
-    integration_key VARCHAR(60) NOT NULL UNIQUE,
-    integration_name VARCHAR(120) NOT NULL,
-    purpose VARCHAR(255) NOT NULL,
-    status VARCHAR(30) NOT NULL,
-    pending_tasks INT NOT NULL DEFAULT 0,
-    last_sync DATETIME2 NULL,
+    setting_key VARCHAR(100) NOT NULL UNIQUE,
+    setting_value VARCHAR(255) NOT NULL,
     updated_at DATETIME2 NOT NULL DEFAULT SYSDATETIME()
   );
 END
 GO
 
-MERGE dbo.integrations_status AS target
+MERGE dbo.site_settings AS target
 USING (
   VALUES
-    ('datajud', 'DataJud', 'Consulta e monitoramento processual nacional', 'planned', 3),
-    ('freshdesk', 'Freshdesk', 'Atendimento e tickets internos/externos', 'planned', 6),
-    ('freshworks', 'Freshworks CRM', 'Gestão de relacionamento com clientes e oportunidades', 'planned', 9),
-    ('advise', 'Advise', 'Inteligência jurídica e suporte estratégico', 'planned', 12)
-) AS source (integration_key, integration_name, purpose, status, pending_tasks)
-ON target.integration_key = source.integration_key
+    ('site_title', 'Freshworks CRM'),
+    ('site_status', 'online'),
+    ('site_mode', 'institutional')
+) AS source (setting_key, setting_value)
+ON target.setting_key = source.setting_key
 WHEN MATCHED THEN
   UPDATE SET
-    integration_name = source.integration_name,
-    purpose = source.purpose,
-    status = source.status,
-    pending_tasks = source.pending_tasks,
+    setting_value = source.setting_value,
     updated_at = SYSDATETIME()
 WHEN NOT MATCHED THEN
-  INSERT (integration_key, integration_name, purpose, status, pending_tasks, last_sync)
-  VALUES (source.integration_key, source.integration_name, source.purpose, source.status, source.pending_tasks, DATEADD(DAY, -1, SYSDATETIME()));
+  INSERT (setting_key, setting_value)
+  VALUES (source.setting_key, source.setting_value);
 GO
 
-SELECT * FROM dbo.integrations_status ORDER BY integration_name;
+SELECT * FROM dbo.site_settings ORDER BY setting_key;
 GO
