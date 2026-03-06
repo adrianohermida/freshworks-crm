@@ -2,40 +2,40 @@
 
 Base inicial de uma **página operacional para escritório de advocacia**.
 
-## Revisão e correção para conflitos que “não avançam”
+## Correção para PR travado em conflitos (mesmo após limpar marcadores)
 
-Se o GitHub mostra algo como “0 conflicts” no arquivo mas você ainda não consegue concluir o merge, normalmente é por um destes motivos:
+Quando o GitHub não deixa avançar, mesmo depois de você remover os marcadores no editor web, normalmente é porque:
 
-1. Sobrou marcador (`<<<<<<<`, `=======`, `>>>>>>>`) em algum arquivo.
-2. O arquivo conflitado não foi marcado manualmente como resolvido no editor web.
-3. Outro arquivo ainda está em conflito, mesmo que o atual esteja limpo.
+- algum arquivo ainda não foi marcado como resolvido na UI;
+- existe conflito residual em outro arquivo;
+- a branch do PR está desatualizada com `main` e precisa de merge local.
 
-Para reduzir esse problema de forma permanente, este repositório agora inclui:
+### Solução aplicada no projeto
 
-- `.gitignore` consolidado (evita ruído de arquivos locais no merge);
-- script automático `scripts/check-conflict-markers.js`;
-- comando `npm run check` que falha se existir qualquer marcador de conflito.
+- checker robusto de marcadores com arquivo + linha: `scripts/check-conflict-markers.js`;
+- script guiado de resolução local: `scripts/resolve-pr-conflicts.sh`;
+- comando pronto: `npm run resolve:conflicts`.
 
-## Como destravar o merge no PR (passo a passo)
+## Fluxo recomendado (resolve de verdade)
 
-1. Atualize sua branch local com `main`:
-   ```bash
-   git fetch origin
-   git checkout sua-branch
-   git merge origin/main
-   ```
-2. Rode validação de conflito:
-   ```bash
-   npm run check:conflicts
-   ```
-3. Se listar arquivos, remova os marcadores manualmente.
-4. Faça commit da resolução:
-   ```bash
-   git add -A
-   git commit -m "Resolve merge conflicts"
-   git push
-   ```
-5. Volte ao PR: ele deve permitir avançar normalmente.
+No seu terminal local:
+
+```bash
+git checkout sua-branch-do-pr
+git fetch origin
+npm run resolve:conflicts
+```
+
+Se o script indicar conflito, ele lista os arquivos. Depois:
+
+```bash
+git add -A
+npm run check:conflicts
+git commit -m "Resolve merge conflicts"
+git push
+```
+
+Depois disso, o PR destrava e permite seguir.
 
 ## GitHub Pages (configuração correta)
 

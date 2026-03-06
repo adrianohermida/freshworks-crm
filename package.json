@@ -7,6 +7,7 @@
     "start": "node src/server.js",
     "dev": "node src/server.js",
     "check": "node --check src/server.js && node scripts/check-conflict-markers.js",
-    "check:conflicts": "node scripts/check-conflict-markers.js"
+    "check:conflicts": "node scripts/check-conflict-markers.js",
+    "resolve:conflicts": "bash scripts/resolve-pr-conflicts.sh main"
   }
 }
