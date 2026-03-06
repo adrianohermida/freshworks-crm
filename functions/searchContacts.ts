@@ -1,0 +1,59 @@
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
+
+const FRESHDESK_DOMAIN = Deno.env.get("FRESHDESK_DOMAIN");
+const FRESHDESK_API_KEY = Deno.env.get("FRESHDESK_API_KEY");
+
+Deno.serve(async (req) => {
+  try {
+    const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me();
+    
+    if (!user) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    if (!FRESHDESK_DOMAIN || !FRESHDESK_API_KEY) {
+      return Response.json({ error: 'Freshdesk credentials not configured' }, { status: 500 });
+    }
+
+    const body = await req.json();
+    const { query, per_page = 50 } = body;
+
+    if (!query) {
+      return Response.json({ error: 'Missing search query' }, { status: 400 });
+    }
+
+    const domain = FRESHDESK_DOMAIN.endsWith('/') ? FRESHDESK_DOMAIN : `${FRESHDESK_DOMAIN}/`;
+    const url = `${domain}api/v2/contacts/autocomplete?query=${encodeURIComponent(query)}&per_page=${per_page}`;
+
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `Basic ${FRESHDESK_API_KEY}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      return Response.json({ 
+        error: 'Search failed',
+        status: response.status
+      }, { status: response.status });
+    }
+
+    const data = await response.json();
+    const contacts = data.contacts || [];
+
+    return Response.json({ 
+      success: true, 
+      contacts: contacts.map(c => ({
+        id: c.id,
+        name: c.name,
+        email: c.email,
+        phone: c.phone
+      })),
+      total: contacts.length
+    });
+  } catch (error) {
+    return Response.json({ error: error.message }, { status: 500 });
+  }
+});
