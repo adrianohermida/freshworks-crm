@@ -22,6 +22,7 @@ function sendStaticFile(response, filePath) {
     '.html': 'text/html; charset=utf-8',
     '.css': 'text/css; charset=utf-8',
     '.js': 'application/javascript; charset=utf-8',
+    '.jsx': 'application/javascript; charset=utf-8',
     '.sql': 'text/plain; charset=utf-8'
   };
 
@@ -37,9 +38,9 @@ const server = http.createServer((request, response) => {
     return;
   }
 
-  const publicDirectory = path.join(process.cwd(), 'public');
+  const siteDirectory = path.join(process.cwd(), 'src');
   const staticPath = currentUrl.pathname === '/' ? '/index.html' : currentUrl.pathname;
-  sendStaticFile(response, path.join(publicDirectory, staticPath));
+  sendStaticFile(response, path.join(siteDirectory, staticPath));
 });
 
 server.listen(port, () => {

@@ -27,20 +27,22 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - name: Ensure .nojekyll in public artifact
-        run: touch public/.nojekyll
+      - name: Ensure .nojekyll in src artifact
+        run: touch src/.nojekyll
 
       - name: Verify required static files
         run: |
-          test -f public/index.html
-          test -f public/main.js
-          test -f public/styles.css
-          test -f public/sql-server-setup.sql
+          test -f src/index.html
+          test -f src/main.jsx
+          test -f src/App.jsx
+          test -f src/Layout.jsx
+          test -f src/index.css
+          test -f src/globals.css
 
-      - name: Upload artifact from public/
+      - name: Upload artifact from src/
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./public
+          path: ./src
 
       - name: Deploy to GitHub Pages
         id: deployment

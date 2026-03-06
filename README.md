@@ -1,27 +1,37 @@
 # freshworks-crm
 
-## Auditoria de rastros legados
+## Site definido dentro de `src/`
 
-Foi realizada uma auditoria completa para identificar rastros do módulo legado criado anteriormente.
+Conforme solicitado, o site foi reestruturado para usar **`src/` como origem principal**.
 
-### Resultado da auditoria
+### Estrutura principal
 
-Foram encontrados rastros apenas em conteúdo textual e script SQL de exemplo. Esses pontos foram corrigidos.
+- `src/index.html`
+- `src/main.jsx`
+- `src/App.jsx`
+- `src/Layout.jsx`
+- `src/pages/`
+- `src/pages.config.js`
+- `src/index.css`
+- `src/globals.css`
+- `src/api/`
+- `src/hooks/`
+- `src/lib/`
+- `src/utils/`
 
-### Correções aplicadas
+## O que foi ajustado
 
-- `public/index.html` revisado para remover qualquer referência a módulo legado.
-- `public/sql-server-setup.sql` reescrito para estrutura neutra (`FreshworksSite` + `site_settings`).
-- `README.md` atualizado com status pós-auditoria.
-
-## Estado atual
-
-- Site principal ativo: `public/index.html`
-- Script SQL neutro: `public/sql-server-setup.sql`
-- Servidor local estático + healthcheck: `src/server.js`
+- Servidor local (`src/server.js`) agora serve arquivos estáticos de `src/`.
+- Workflow do GitHub Pages agora publica a pasta `src/`.
+- `index.html` da raiz redireciona para `src/index.html`.
+- Conteúdo antigo em `public/` foi removido para evitar sobreposição/confusão.
 
 ## Execução local
 
 ```bash
 node src/server.js
 ```
+
+## Healthcheck
+
+- `GET /health`
