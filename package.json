@@ -1,0 +1,13 @@
+{
+  "name": "freshworks-crm",
+  "version": "1.0.0",
+  "description": "Site institucional freshworks-crm",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js",
+    "check": "node --check src/server.js && node scripts/check-conflict-markers.js",
+    "check:conflicts": "node scripts/check-conflict-markers.js",
+    "resolve:conflicts": "bash scripts/resolve-pr-conflicts.sh main"
+  }
+}
