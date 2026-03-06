@@ -3,111 +3,40 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard Operacional Jurídico</title>
+    <title>Freshworks CRM Jurídico</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <main class="container">
       <header>
         <p class="eyebrow">Escritório de Advocacia</p>
-        <h1>Dashboard Operacional Integrado</h1>
+        <h1>Página inicial do projeto</h1>
         <p>
-          Base inicial para integrar DataJud, Freshdesk, Freshworks CRM e Advise em uma única visão
-          operacional para o time jurídico.
+          Esta é a home principal e não é mais sobrescrita pelo dashboard.
+          O painel operacional permanece disponível em uma rota dedicada.
         </p>
-        <p class="data-source" id="data-source">Carregando origem dos dados...</p>
       </header>
 
-      <section class="kpis" id="kpis"></section>
-
-      <section>
-        <h2>Integrações</h2>
-        <div class="grid" id="integration-grid"></div>
-      </section>
-
       <section class="setup">
-        <h2>Configuração SQL Server Local (Windows 11)</h2>
-        <p>
-          Você importou o repositório, mas ainda não executou o SQL: siga este roteiro e valide no SSMS.
-        </p>
-
-        <ol>
-          <li>Abra o <strong>SQL Server Configuration Manager</strong> e habilite <strong>TCP/IP</strong>.</li>
-          <li>Reinicie o serviço da instância (<code>SQL Server (SQLEXPRESS ou MSSQLSERVER)</code>).</li>
-          <li>No <strong>SSMS</strong>, execute o script de criação abaixo.</li>
-          <li>Execute a consulta de validação para confirmar se o banco/tabela foram criados corretamente.</li>
-        </ol>
-
+        <h2>Navegação</h2>
         <div class="setup-grid">
           <article class="setup-card">
-            <h3>Conexão local sugerida</h3>
-            <ul>
-              <li><strong>Servidor:</strong> <code>localhost\\SQLEXPRESS</code> (ou <code>localhost</code>)</li>
-              <li><strong>Porta:</strong> <code>1433</code> (se TCP/IP habilitado)</li>
-              <li><strong>Banco:</strong> <code>AdvocaciaOperacional</code></li>
-              <li><strong>Autenticação:</strong> Windows ou SQL Login</li>
-            </ul>
-          </article>
-
-          <article class="setup-card">
-            <h3>String de conexão (exemplo Node)</h3>
-            <pre><code>DB_CLIENT=sqlserver
-DB_HOST=localhost
-DB_PORT=1433
-DB_NAME=AdvocaciaOperacional
-DB_USER=sa
-DB_PASSWORD=SuaSenhaForte</code></pre>
-          </article>
-
-          <article class="setup-card">
-            <h3>Script inicial</h3>
+            <h3>Acessar dashboard operacional</h3>
             <p>
-              Execute o arquivo SQL pronto:
-              <a href="./sql-server-setup.sql" target="_blank" rel="noreferrer">abrir script sql-server-setup.sql</a>
+              Abra o painel em:
+              <a href="./dashboard.html">/dashboard.html</a>
             </p>
-            <p>Ele cria banco, tabela e já insere as 4 integrações iniciais.</p>
           </article>
 
           <article class="setup-card">
-            <h3>Validação no SSMS</h3>
-            <pre><code>USE AdvocaciaOperacional;
-GO
-SELECT COUNT(*) AS total_integracoes
-FROM dbo.integrations_status;
-GO
-
-SELECT TOP 4 integration_key, integration_name, status
-FROM dbo.integrations_status
-ORDER BY integration_name;</code></pre>
-            <p>Esperado: <strong>4 integrações</strong> após rodar o script inicial.</p>
+            <h3>Script SQL Server</h3>
+            <p>
+              Script de inicialização:
+              <a href="./sql-server-setup.sql" target="_blank" rel="noreferrer">sql-server-setup.sql</a>
+            </p>
           </article>
         </div>
       </section>
     </main>
-
-    <template id="kpi-template">
-      <article class="kpi-card">
-        <h3></h3>
-        <strong></strong>
-      </article>
-    </template>
-
-    <template id="integration-template">
-      <article class="integration-card">
-        <div class="card-head">
-          <h3></h3>
-          <span class="badge"></span>
-        </div>
-        <p class="purpose"></p>
-        <dl>
-          <dt>Tarefas pendentes</dt>
-          <dd class="pending"></dd>
-          <dt>Última sincronização</dt>
-          <dd class="sync"></dd>
-        </dl>
-      </article>
-    </template>
-
-    <script src="./main.js" defer></script>
   </body>
 </html>

@@ -1,4 +1,16 @@
-<<<<<<< HEAD
+# Dependencies
+node_modules/
+
+# Runtime data
+data/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
 #env
 .env
 .env.*
@@ -12,24 +24,21 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# Build output
+dist/
+dist-ssr/
+coverage/
 
-# Editor directories and files
-.vscode/*
+# Editors and OS
+.vscode/
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
+Thumbs.db
 *.suo
-*.ntvs*
 *.njsproj
 *.sln
 *.sw?
 
-.env
-=======
-node_modules/
-data/
->>>>>>> c1f773578b3ce27afce95c807fb7d38fae3be70d
+# Local static serving artifacts
+_site/
