@@ -35,7 +35,7 @@ jobs:
           test -f public/index.html
           test -f public/main.js
           test -f public/styles.css
-          test -f public/dashboard-summary.json
+          test -f public/sql-server-setup.sql
 
       - name: Upload artifact from public/
         uses: actions/upload-pages-artifact@v3
