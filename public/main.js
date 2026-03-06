@@ -1,1 +1,1 @@
-console.info('Site principal carregado com sucesso.');
+console.info('Site principal restaurado e carregado.');

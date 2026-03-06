@@ -1,7 +1,7 @@
 {
   "name": "freshworks-crm",
   "version": "1.0.0",
-  "description": "Dashboard operacional para escritório de advocacia",
+  "description": "Site institucional freshworks-crm",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",

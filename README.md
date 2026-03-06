@@ -1,35 +1,24 @@
 # freshworks-crm
 
-## Ajuste aplicado
+## Site restaurado (sem dashboard)
 
-Conforme solicitado, o dashboard criado anteriormente foi removido.
+Conforme solicitado, o dashboard foi removido e o site principal do repositório foi restabelecido.
 
-Agora o GitHub Pages exibe apenas o **site principal** em `public/index.html`.
+### O que foi ajustado
 
-## O que foi removido
+- `public/index.html` agora exibe apenas a home principal.
+- `public/main.js` não possui mais lógica de dashboard.
+- Backend simplificado em `src/server.js` para servir site estático e `GET /health`.
+- Removidos arquivos e serviços de dashboard:
+  - `src/services/dashboardService.js`
+  - `src/services/database.js`
+  - `src/config/integrations.js`
 
-- `public/dashboard.html`
-- `public/dashboard.js`
-- `public/dashboard-summary.json`
+## GitHub Pages
 
-## Publicação no GitHub Pages
+O deploy continua publicado a partir da pasta `public/` via workflow:
 
-O workflow publica a pasta `public/` e valida os arquivos principais:
-
-- `public/index.html`
-- `public/main.js`
-- `public/styles.css`
-- `public/sql-server-setup.sql`
-
-Também existe `index.html` na raiz com redirecionamento para `public/index.html` (compatibilidade com deploy por branch/root).
-
-## Checklist rápido
-
-1. **Settings → Pages**
-2. Source:
-   - `GitHub Actions` (recomendado), ou
-   - `Deploy from branch → main/root`
-3. Push na branch e validar workflow em **Actions**.
+- `.github/workflows/deploy-pages.yml`
 
 ## Execução local
 
