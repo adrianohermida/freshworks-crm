@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Operacional Jurídico</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header>
+        <p class="eyebrow">Escritório de Advocacia</p>
+        <h1>Dashboard Operacional Integrado</h1>
+        <p>
+          Base inicial para integrar DataJud, Freshdesk, Freshworks CRM e Advise em uma única visão
+          operacional para o time jurídico.
+        </p>
+        <p class="data-source" id="data-source">Carregando origem dos dados...</p>
+      </header>
+
+      <section class="kpis" id="kpis"></section>
+
+      <section>
+        <h2>Integrações</h2>
+        <div class="grid" id="integration-grid"></div>
+      </section>
+    </main>
+
+    <template id="kpi-template">
+      <article class="kpi-card">
+        <h3></h3>
+        <strong></strong>
+      </article>
+    </template>
+
+    <template id="integration-template">
+      <article class="integration-card">
+        <div class="card-head">
+          <h3></h3>
+          <span class="badge"></span>
+        </div>
+        <p class="purpose"></p>
+        <dl>
+          <dt>Tarefas pendentes</dt>
+          <dd class="pending"></dd>
+          <dt>Última sincronização</dt>
+          <dd class="sync"></dd>
+        </dl>
+      </article>
+    </template>
+
+    <script src="./dashboard.js" defer></script>
+  </body>
+</html>
