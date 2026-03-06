@@ -27,20 +27,13 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - name: Prepare artifact
-        run: |
-          mkdir -p ./_site
-          cp index.html ./_site/index.html
-          cp main.js ./_site/main.js
-          cp styles.css ./_site/styles.css
-          cp dashboard-summary.json ./_site/dashboard-summary.json
-          cp sql-server-setup.sql ./_site/sql-server-setup.sql
-          cp .nojekyll ./_site/.nojekyll
+      - name: Ensure .nojekyll in public artifact
+        run: touch public/.nojekyll
 
-      - name: Upload artifact
+      - name: Upload artifact from public/
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./_site
+          path: ./public
 
       - name: Deploy to GitHub Pages
         id: deployment
