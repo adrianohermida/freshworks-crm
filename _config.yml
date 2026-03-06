@@ -1,0 +1,12 @@
+title: freshworks-crm
+baseurl: ""
+url: ""
+
+include:
+  - dashboard-summary.json
+  - sql-server-setup.sql
+
+exclude:
+  - node_modules/
+  - src/
+  - public/
