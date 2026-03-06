@@ -2,20 +2,29 @@
 
 ## Ajuste refeito do site (Hermida Maia Advocacia)
 
-Refiz a implementação do site existente em `src/`, sem criar nova página, com foco em estabilidade para GitHub Pages.
+Refiz a configuração de publicação para garantir que o site existente em `src/` execute corretamente no GitHub Pages.
 
-## O que foi revisado
+## O que foi ajustado agora
 
-- Estrutura da home mantida em `src/index.html`.
-- Fluxo de renderização revisado (`src/main.js` → `src/App.js` → `src/Layout.js` + `src/pages/home.js`).
-- `src/pages.config.js` agora é efetivamente usado pelo app.
-- Conteúdo da página ajustado para Hermida Maia Advocacia.
-- CSS refinado para melhorar legibilidade e consistência visual.
+- Mantida a página existente em `src/index.html` (sem criar páginas novas).
+- Workflow do GitHub Pages atualizado para:
+  - disparar em push de qualquer branch;
+  - validar os arquivos necessários em `src/`;
+  - montar artifact `_site/` com os arquivos de `src/` na raiz do deploy.
+- Isso evita falhas de execução por caminho/subpasta e garante que `index.html` publicado aponte corretamente para `main.js`.
 
-## Compatibilidade GitHub Pages
+## Estrutura publicada no Pages
 
-- Deploy continua publicando `src/` via workflow.
-- Módulos em `.js` (evitando problema de MIME comum com `.jsx` em hosting estático).
+A partir de `src/`:
+
+- `index.html`
+- `main.js`
+- `App.js`
+- `Layout.js`
+- `pages/home.js`
+- `globals.css`
+- `index.css`
+- `sql-server-setup.sql`
 
 ## Execução local
 
