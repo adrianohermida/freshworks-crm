@@ -2,6 +2,26 @@
 
 Base inicial de uma **página operacional para escritório de advocacia**.
 
+## Auditoria e correção do GitHub Pages (site não carregando)
+
+Foi identificado um ponto crítico: o workflow de deploy do Pages executava apenas em `main/master`,
+mas o desenvolvimento estava acontecendo na branch `work`. Com isso, o deploy não era disparado e o site ficava indisponível.
+
+### Correções aplicadas
+
+- Workflow atualizado para disparar em `main`, `master` e `work`.
+- Validação de arquivos estáticos no CI antes do upload (`index.html`, `main.js`, `styles.css`, `dashboard-summary.json`).
+- Mantido upload direto da pasta `public/` para o GitHub Pages.
+
+Arquivo: `.github/workflows/deploy-pages.yml`.
+
+## Checklist para publicar com sucesso
+
+1. Em **Settings → Pages**, configure **Source: GitHub Actions**.
+2. Faça push para uma branch monitorada (`work`, `main` ou `master`).
+3. Vá em **Actions** e confirme sucesso em `Deploy static site to GitHub Pages`.
+4. Abra a URL do Pages informada no job `Deploy to GitHub Pages`.
+
 ## Correção para PR travado em conflitos (mesmo após limpar marcadores)
 
 Quando o GitHub não deixa avançar, mesmo depois de você remover os marcadores no editor web, normalmente é porque:
@@ -36,13 +56,6 @@ git push
 ```
 
 Depois disso, o PR destrava e permite seguir.
-
-## GitHub Pages (configuração correta)
-
-1. Vá em **Settings → Pages**.
-2. Em **Build and deployment**, selecione **Source: GitHub Actions**.
-3. Faça push na branch `main` (ou `master`).
-4. Verifique em **Actions** a execução do workflow `Deploy static site to GitHub Pages`.
 
 ## Estrutura atual
 

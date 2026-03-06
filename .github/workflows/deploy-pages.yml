@@ -2,7 +2,7 @@ name: Deploy static site to GitHub Pages
 
 on:
   push:
-    branches: ["main", "master"]
+    branches: ["main", "master", "work"]
   workflow_dispatch:
 
 permissions:
@@ -29,6 +29,13 @@ jobs:
 
       - name: Ensure .nojekyll in public artifact
         run: touch public/.nojekyll
+
+      - name: Verify required static files
+        run: |
+          test -f public/index.html
+          test -f public/main.js
+          test -f public/styles.css
+          test -f public/dashboard-summary.json
 
       - name: Upload artifact from public/
         uses: actions/upload-pages-artifact@v3
