@@ -17,6 +17,7 @@
 
 .subtitle {
   max-width: 720px;
+  color: #4b3727;
 }
 
 .setup {
@@ -35,4 +36,8 @@
   border: 1px solid #e8dccf;
   padding: 1rem;
   box-shadow: 0 4px 12px rgb(66 34 9 / 6%);
+}
+
+.setup-card h3 {
+  margin-top: 0;
 }

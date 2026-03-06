@@ -1,10 +1,10 @@
-export function Layout({ title, content }) {
+export function Layout({ eyebrow, title, subtitle, content }) {
   return `
     <main class="container">
       <header class="hero">
-        <p class="eyebrow">Escritório de Advocacia</p>
+        <p class="eyebrow">${eyebrow}</p>
         <h1>${title}</h1>
-        <p class="subtitle">Atuação estratégica, técnica e humana para pessoas e empresas.</p>
+        <p class="subtitle">${subtitle}</p>
       </header>
       ${content}
     </main>

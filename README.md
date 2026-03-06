@@ -1,29 +1,28 @@
 # freshworks-crm
 
-## Auditoria e ajuste do novo site (Hermida Maia Advocacia)
+## Ajuste refeito do site (Hermida Maia Advocacia)
 
-Foi realizada auditoria da estrutura em `src/` e aplicadas correções para funcionamento no GitHub Pages sem criar nova página.
+Refiz a implementação do site existente em `src/`, sem criar nova página, com foco em estabilidade para GitHub Pages.
 
-## Correções aplicadas
+## O que foi revisado
 
-- Mantida apenas a página existente do site em `src/index.html`.
-- Conteúdo ajustado para **Hermida Maia Advocacia**.
-- Migração de módulos de `.jsx` para `.js` para evitar problemas de MIME no GitHub Pages estático.
-- Workflow do Pages atualizado para validar os arquivos atuais (`main.js`, `App.js`, `Layout.js`).
-- Servidor local permanece servindo o site diretamente de `src/`.
+- Estrutura da home mantida em `src/index.html`.
+- Fluxo de renderização revisado (`src/main.js` → `src/App.js` → `src/Layout.js` + `src/pages/home.js`).
+- `src/pages.config.js` agora é efetivamente usado pelo app.
+- Conteúdo da página ajustado para Hermida Maia Advocacia.
+- CSS refinado para melhorar legibilidade e consistência visual.
 
-## Estrutura atual do site
+## Compatibilidade GitHub Pages
 
-- `src/index.html`
-- `src/main.js`
-- `src/App.js`
-- `src/Layout.js`
-- `src/pages/home.js`
-- `src/index.css`
-- `src/globals.css`
+- Deploy continua publicando `src/` via workflow.
+- Módulos em `.js` (evitando problema de MIME comum com `.jsx` em hosting estático).
 
 ## Execução local
 
 ```bash
 node src/server.js
 ```
+
+## Healthcheck
+
+- `GET /health`

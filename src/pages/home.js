@@ -19,6 +19,20 @@ export function renderHomePage() {
     </section>
 
     <section class="setup">
+      <h2>Diferenciais</h2>
+      <div class="setup-grid">
+        <article class="setup-card">
+          <h3>Atendimento Próximo</h3>
+          <p>Comunicação clara e acompanhamento contínuo em cada etapa do caso.</p>
+        </article>
+        <article class="setup-card">
+          <h3>Estratégia Jurídica</h3>
+          <p>Análise técnica orientada a resultado e mitigação de riscos.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="setup">
       <h2>Contato</h2>
       <div class="setup-grid">
         <article class="setup-card">
@@ -26,6 +40,13 @@ export function renderHomePage() {
           <p>Segunda a sexta, 9h às 18h.</p>
           <p><strong>E-mail:</strong> contato@hermidamaia.adv.br</p>
           <p><strong>Telefone:</strong> (00) 0000-0000</p>
+        </article>
+        <article class="setup-card">
+          <h3>Base técnica</h3>
+          <p>
+            Script SQL de apoio:
+            <a href="./sql-server-setup.sql" target="_blank" rel="noreferrer">sql-server-setup.sql</a>
+          </p>
         </article>
       </div>
     </section>
