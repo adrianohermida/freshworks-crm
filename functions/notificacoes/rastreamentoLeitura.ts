@@ -1,0 +1,77 @@
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
+
+Deno.serve(async (req) => {
+  try {
+    const base44 = createClientFromRequest(req);
+
+    // This endpoint can be called without auth for pixel tracking
+    const { pixelId } = req.url.split('?')[1]?.split('=')[1] || '';
+
+    if (!pixelId) {
+      // Retorn 1x1 transparent GIF
+      const gif = new Uint8Array([
+        0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x01, 0x00,
+        0x01, 0x00, 0x80, 0x00, 0x00, 0xff, 0xff, 0xff,
+        0x00, 0x00, 0x00, 0x21, 0xf9, 0x04, 0x01, 0x0a,
+        0x00, 0x01, 0x00, 0x2c, 0x00, 0x00, 0x00, 0x00,
+        0x01, 0x00, 0x01, 0x00, 0x00, 0x02, 0x02, 0x4c,
+        0x01, 0x00, 0x3b
+      ]);
+
+      return new Response(gif, {
+        headers: {
+          'Content-Type': 'image/gif',
+          'Cache-Control': 'no-cache, no-store, must-revalidate'
+        }
+      });
+    }
+
+    // Track email open
+    try {
+      const registro = await base44.entities.RastreamentoEmail?.filter({ pixelId });
+      if (registro && registro.length > 0) {
+        await base44.entities.RastreamentoEmail?.update(registro[0].id, {
+          aberto: true,
+          dataAbertura: new Date().toISOString(),
+          ipAddress: req.headers.get('x-forwarded-for') || 'unknown',
+          userAgent: req.headers.get('user-agent') || 'unknown'
+        });
+      }
+    } catch (e) {
+      console.log('RastreamentoEmail entity not available');
+    }
+
+    // Return 1x1 transparent GIF
+    const gif = new Uint8Array([
+      0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x01, 0x00,
+      0x01, 0x00, 0x80, 0x00, 0x00, 0xff, 0xff, 0xff,
+      0x00, 0x00, 0x00, 0x21, 0xf9, 0x04, 0x01, 0x0a,
+      0x00, 0x01, 0x00, 0x2c, 0x00, 0x00, 0x00, 0x00,
+      0x01, 0x00, 0x01, 0x00, 0x00, 0x02, 0x02, 0x4c,
+      0x01, 0x00, 0x3b
+    ]);
+
+    return new Response(gif, {
+      headers: {
+        'Content-Type': 'image/gif',
+        'Cache-Control': 'no-cache, no-store, must-revalidate'
+      }
+    });
+  } catch (error) {
+    console.error('RastreamentoLeitura error:', error);
+    
+    // Return GIF on error
+    const gif = new Uint8Array([
+      0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x01, 0x00,
+      0x01, 0x00, 0x80, 0x00, 0x00, 0xff, 0xff, 0xff,
+      0x00, 0x00, 0x00, 0x21, 0xf9, 0x04, 0x01, 0x0a,
+      0x00, 0x01, 0x00, 0x2c, 0x00, 0x00, 0x00, 0x00,
+      0x01, 0x00, 0x01, 0x00, 0x00, 0x02, 0x02, 0x4c,
+      0x01, 0x00, 0x3b
+    ]);
+
+    return new Response(gif, {
+      headers: { 'Content-Type': 'image/gif' }
+    });
+  }
+});
